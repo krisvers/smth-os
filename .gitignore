@@ -1,0 +1,7 @@
+./build/
+./build/*/*
+*.o
+*.oasm
+*.img
+*.bin
+*.elf
