@@ -3,23 +3,23 @@
 section ".text"
 
 extern putc
+extern puts
 
 global test
 test:
-	push ebp
-	mov ebp, esp
-
-	mov eax, [esp + 8]
-	
-	push byte eax
+	push 'T'
 	call putc
-	
 	add esp, 4
 
-	pop ebp
+	push TEST_MSG
+	call puts
+	add esp, 4
+
+	xor eax, eax
 
 	ret
 
 section ".data"
 
 CURSOR dd 0xB8000
+TEST_MSG db "EST", 0x0A, 0

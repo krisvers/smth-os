@@ -2,7 +2,8 @@
 org 0x7C00
 
 %define KERN_SIZE 0x3B
-%define KERN_OFFSET 0x502
+%define KERN_OFFSET 0x5A0
+%define INFO_OFFSET 0x500
 
 start:
 	jmp .skip_bpb ; Workaround for some BIOSes that require this stub
@@ -101,11 +102,14 @@ start:
 	sub eax, 1
 	mov [gdtr], ax
 
+; passing info
+	mov word [0x500], INFO_OFFSET
+
 ; pci mechanism
 	mov eax, 0xB101
 	int 0x1A
-	mov byte [0x500], cl	; number of devices
-	mov byte [0x501], al	; mechanism to access PCI
+	mov byte [INFO_OFFSET + 2], cl	; number of devices
+	mov byte [INFO_OFFSET + 3], al	; mechanism to access PCI
 
 ; load GDT
 	cli

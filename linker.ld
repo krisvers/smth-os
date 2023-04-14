@@ -1,6 +1,6 @@
 ENTRY(_kentry)
 
-KERNEL_BASE = 0x502;
+KERNEL_BASE = 0x5A0;
 
 MEMORY
 {
