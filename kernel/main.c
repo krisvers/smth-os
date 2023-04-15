@@ -1,5 +1,5 @@
-#include <tty.h>
+#include <stdio.h>
 
 void main() {
-	tty_puts(0, 0, "test 69 420");
+	puts("hello\tworld\nnewline\ntest\bs");
 }
