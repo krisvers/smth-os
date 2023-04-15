@@ -4,16 +4,17 @@ CFLAGS := -I kernel/include -O3 -nostdlib -m32 -march=i386 -fno-pie -fno-stack-p
 LD := ld
 LDFLAGS := -m elf_i386 -T $(DIR)/linker.ld -nostdlib
 ASM := nasm
-OBJ := $(shell find $(DIR) -type f -name "*.o*")
 
 .PHONY: all build clean qemu rebuild
 
-all: clean build qemu
+all: build qemu
 
 build:
+	@echo "> Compiling libs and kernel..."
 	@make --no-print-directory -C ./kernel
 	@echo ">  Linking libs and kernel..."
-	$(LD) $(LDFLAGS) --oformat binary $(OBJ) -o $(DIR)/build/bin/kernel.bin
+	@echo "-    Linking $(shell find . -type f -name "*.o") $(shell find . -type f -name "*.o") to ./build/bin/kernel.bin"
+	@$(LD) $(LDFLAGS) --oformat binary $(shell find ./build -type f -name "*.o") $(shell find ./build -type f -name "*.oasm") -o $(DIR)/build/bin/kernel.bin
 	@echo ">  Assembling bootloader..."
 	@nasm ./boot/boot.asm -f bin -o ./build/bin/boot.bin
 	@echo ">  Creating disk image..."

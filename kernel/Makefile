@@ -14,7 +14,9 @@ OBJ_ASM = $(SRC_ASM:.asm=.oasm)
 all: $(OBJ_FILES) $(OBJ_ASM)
 
 %.o: %.c
+	@echo "-    Compiling $< to $@"
 	@$(CC) $(CFLAGS) -c $(DIR)/kernel/$< -o $(DIR)/build/kernel/$@
 
 %.oasm: %.asm
+	@echo "-    Assembling $< to $@"
 	@$(ASM) $(ASMFLAGS) $(DIR)/kernel/$< -o $(DIR)/build/kernel/$@
