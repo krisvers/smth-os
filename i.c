@@ -1,65 +1,30 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdbool.h>
-#include <limits.h>
-#include <tty.h>
+#include <std/stdio.h>
 
-static uint16_t cursor_x = 0;
-static uint16_t cursor_y = 0;
 static char hex_chars[16] = "0123456789ABCDEF";
+static enum vga_color color = WHITE;
 
-int putc(int ic) {
-	switch (ic) {
-		case '\n':
-			cursor_x = 0;
-			if (++cursor_y >= 25) {
-				cursor_x = 0; cursor_y = 0;
-				tty_clear();
-			}
-			break;
-		case '\t':
-			cursor_x += 4;
-			if (cursor_x >= 80) {
-				cursor_x = 0;
-			}
-			break;
-		case '\b':
-			if (--cursor_x >= 80) {
-				if (--cursor_y >= 25) {
-					return -1;
-				}
-
-				cursor_x = 79;
-				tty_putc(cursor_x, cursor_y, ' ');
-			}
-
-			tty_putc(cursor_x, cursor_y, ' ');
-
-			break;
-		default:
-			tty_putc(cursor_x, cursor_y, (char) ic);
-			if (++cursor_x >= 80) {
-				cursor_x = 0;
-				if (++cursor_y >= 25) {
-					cursor_y = 0;
-					tty_clear();
-				}
-			}
-
-			break;
-	}
-	
-	return ic;
+void putcolor(enum vga_color col) {
+    color = col;
 }
 
 int puts(const char * string) {
-	for (; *string != '\0'; string++) {
-		putc(*string);
+	return printf("%s\n", string);
+}
+
+int putc(int ic) {
+	char c = (char) ic;
+	if (c == '\n') {
+        tty_linefeed();
+	} else if (c == '\t') {
+        tty_tab();
+    } else if (c == '\b') {
+        tty_backspace();
+	} else {
+		tty_putc(c, color);
 	}
 
-	return *string;
+	// TODO: Implement stdio and the write system call.
+	return ic;
 }
 
 static bool print(const char * data, size_t length) {
@@ -140,40 +105,40 @@ int printf(const char * restrict format, ...) {
 			while (--pos >= 0) {
 				putc(buffer[pos]);
 			}
-		} else if (*format == 'x') {
-			putc('0');
-			putc('x');
-			format++;
-			int num = va_arg(parameters, int);
-			char buffer[32];
-			int pos = 0;
+        } else if (*format == 'x') {
+            putc('0');
+            putc('x');
+            format++;
+            int num = va_arg(parameters, int);
+            char buffer[32];
+            int pos = 0;
 
-			do {
-				unsigned long long rem = num % 16;
-				num /= 16;
-				buffer[pos++] = hex_chars[rem];
-			} while (num > 0);
+            do {
+                unsigned long long rem = num % 16;
+                num /= 16;
+                buffer[pos++] = hex_chars[rem];
+            } while (num > 0);
 
-			while (--pos >= 0) {
-				putc(buffer[pos]);
-			}
-		} else if (*format == 'b') {
-			putc('0');
-			putc('b');
-			format++;
-			int num = va_arg(parameters, int);
-			char buffer[32];
-			int pos = 0;
+            while (--pos >= 0) {
+                putc(buffer[pos]);
+            }
+        } else if (*format == 'b') {
+            putc('0');
+            putc('b');
+            format++;
+            int num = va_arg(parameters, int);
+            char buffer[32];
+            int pos = 0;
 
-			do {
-				unsigned long long rem = num % 2;
-				num /= 2;
-				buffer[pos++] = hex_chars[rem];
-			} while (num > 0);
+            do {
+                unsigned long long rem = num % 2;
+                num /= 2;
+                buffer[pos++] = hex_chars[rem];
+            } while (num > 0);
 
-			while (--pos >= 0) {
-				putc(buffer[pos]);
-			}
+            while (--pos >= 0) {
+                putc(buffer[pos]);
+            }
 		} else {
 			format = format_begun_at;
 			size_t len = strlen(format);
