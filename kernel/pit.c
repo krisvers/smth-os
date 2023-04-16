@@ -21,6 +21,8 @@ void pit_set_freq(size_t hz) {
 
 void pit_init() {
 	pit_set_freq(1000);
-	printf("pit initialized [*]\n\thz: %d, ms: %d\n", 1000, mseconds);
+	log(0x07, "pit initialized [");
+	log(0x0A, "*");
+	log(0x07, "]\n\thz: %d, ms: %d\n", 1000, mseconds);
 	irq_reg_handler(0, timer_handler);
 }

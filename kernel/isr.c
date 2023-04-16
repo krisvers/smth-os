@@ -565,21 +565,23 @@ void isr_initgates() {
 void isr_init() {
 	isr_initgates();
 
-	printf("isr initialized [*]\n");
+	log(0x07, "isr initialized [");
+	log(0x0A, "*");
+	log(0x07, "]\n");
 }
 
 void __attribute((cdecl)) isr_handler(Registers * regs) {
 	if (isr_handlers[regs->interrupt] != NULL) {
 		isr_handlers[regs->interrupt](regs);
 	} else if (regs->interrupt >= 32) {
-		printf("Unhandled interrupt %i\n", regs->interrupt);
+		log(0x0E, "Unhandled interrupt %i\n", regs->interrupt);
 	} else {
-		printf("Unhandled exception %i: %s\n", regs->interrupt, exceptions[regs->interrupt]);
-		printf("	eax=%x,	ebx=%x,	ecx=%x,	edx=%x,	esi=%x,	edi=%x\n",
+		log(0x0C, "Unhandled exception %i: %s\n", regs->interrupt, exceptions[regs->interrupt]);
+		log(0x0E, "	eax=%x,	ebx=%x,	ecx=%x,	edx=%x,	esi=%x,	edi=%x\n",
 				regs->eax,	regs->ebx,	regs->ecx,	regs->edx,	regs->esi,	regs->edi);
-		printf("	esp=%x,	ebp=%x,	eip=%x,	cflags=%x\n	cs=%x,	ds=%x,	ss=%x\n",
+		log(0x0E, "	esp=%x,	ebp=%x,	eip=%x,	cflags=%x\n	cs=%x,	ds=%x,	ss=%x\n",
 				regs->esp,	regs->ebp,	regs->eip,	regs->cflags,	regs->cs,	regs->ds,	regs->ss);
-		printf("	interrupt=%x,	errorcode=%x\n", regs->interrupt, regs->error);
+		log(0x0E, "	interrupt=%x,	errorcode=%x\n", regs->interrupt, regs->error);
 		abort();
 	}
 }

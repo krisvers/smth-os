@@ -15,7 +15,7 @@ void irq_handler(Registers * regs) {
 	if (irq_handlers[irq] != NULL) {
 		irq_handlers[irq](regs);
 	} else {
-		printf("Unhandled IRQ %d\n", irq);
+		log(0x0E, "Unhandled IRQ %d\n", irq);
 		pic_send_eoi();
 	}
 }
@@ -32,11 +32,13 @@ void irq_init() {
 
 	sti();
 
-	printf("irq initialized [*]\n");
+	log(0x07, "irq initialized [");
+	log(0x0A, "*");
+	log(0x07, "]\n");
 }
 
 void irq_reg_handler(int irq, IRQHandler handler) {
 	irq_handlers[irq] = handler;
 	pic_unmask(irq);
-	printf("\tirq registered:\t%x\n", irq);
+	log(0x07, "\tirq registered:\t%x\n", irq);
 }

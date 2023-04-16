@@ -46,5 +46,7 @@ void idt_disablegate(int interrupt)
 void idt_init()
 {
 	idt_load(&g_IDTDescriptor);
-	printf("idt initialized [*]\n\tdesc: %x\n", &g_IDTDescriptor);
+	log(0x07, "idt initialized [");
+	log(0x0A, "*");
+	log(0x07, "]\n\tdesc: %x\n", &g_IDTDescriptor);
 }

@@ -92,5 +92,7 @@ void gdt_load(GDTDescriptor * descriptor, uint16_t codeSegment, uint16_t dataSeg
 
 void gdt_init() {
 	gdt_load(&g_GDTDescriptor, GDT_CODE_SEGMENT, GDT_DATA_SEGMENT);
-	printf("gdt initialized [*]\n\tdesc: %x\n", &g_GDTDescriptor);
+	log(0x07, "gdt initialized [");
+	log(0x0A, "*");
+	log(0x07, "]\n\tdesc: %x\n", &g_GDTDescriptor);
 }
