@@ -9,11 +9,21 @@ size_t strlen(const char * str) {
 	return s - str;
 }
 
+void * memset(void * dest, uint8_t value, size_t len) {
+	uint8_t * d = dest;
+
+	while (len-- && d++) {
+		*d = value;
+	}
+
+	return dest;
+}
+
 void * memcpy(void * dest, const void * src, size_t len) {
 	char * d = (char *) dest;
 	const char * s = src;
 
-	for (; len--;) {
+	while (len--) {
 		*d++ = *s++;
 	}
 

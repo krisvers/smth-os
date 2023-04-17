@@ -79,9 +79,17 @@ start:
 	.vid:
 ; setup video mode
 	;	0x03: text mode 80x25, 16 FG colors, 16 BG colors
+	;	0x13: vga mode 320x200, 8 bit RGB
 	mov ah, 0x00
-	mov al, 0x03
+	mov al, 0x13
 	int 0x10
+
+; pass video mode
+	mov byte [INFO_OFFSET], al		; 0
+	mov dword [INFO_OFFSET + 1], 0xA0000	; 1 - 4
+	mov word [INFO_OFFSET + 5], 320		; 5 - 6
+	mov word [INFO_OFFSET + 7], 200		; 7 - 8
+	mov byte [INFO_OFFSET + 9], 1		; 9
 
 ; hide cursor
 	mov ah, 0x01
@@ -102,14 +110,9 @@ start:
 	sub eax, 1
 	mov [gdtr], ax
 
-; passing info
-	mov word [0x500], INFO_OFFSET
-
 ; pci mechanism
 	mov eax, 0xB101
 	int 0x1A
-	mov byte [INFO_OFFSET + 2], cl	; number of devices
-	mov byte [INFO_OFFSET + 3], al	; mechanism to access PCI
 
 ; load GDT
 	cli
