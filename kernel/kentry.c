@@ -30,12 +30,12 @@ VGA-Compatible BIOS Video Modes
 
 
 void __attribute((section(".entry"))) _kentry() {
-	video_res[0] = (boot_info[6] << 8) | (boot_info[5]);
-	video_res[1] = (boot_info[8] << 8) | (boot_info[7]);
-	video_ptr = (void *) ((boot_info[4] << 24) | (boot_info[3] << 16) | (boot_info[2] << 8) | (boot_info[1]));
+	video_res[0] = (boot_info[7] << 8) | (boot_info[6]);
+	video_res[1] = (boot_info[9] << 8) | (boot_info[8]);
+	video_ptr = (void *) ((boot_info[5] << 24) | (boot_info[4] << 16) | (boot_info[3] << 8) | (boot_info[2]));
 
 	vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
-	switch (boot_info[0]) {
+	switch (((uint16_t *) boot_info)[0]) {
 		case 0x00:
 			tty_init(video_res[0], video_res[1], video_ptr);
 			break;
@@ -49,38 +49,41 @@ void __attribute((section(".entry"))) _kentry() {
 			tty_init(video_res[0], video_res[1], video_ptr);
 			break;
 		case 0x04:
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 		case 0x05:
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 		case 0x06:
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 		case 0x0D:
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 		case 0x0E:
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 		case 0x0F:
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 		case 0x10:
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 		case 0x11:
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 		case 0x12:
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 		case 0x13:
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
+			break;
+		case 0x115:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 		default:
 			// other video modes (probably not standard vga) or possible headless
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			break;
 	}
 
