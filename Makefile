@@ -22,7 +22,7 @@ build:
 
 clean:
 	rm -rf build
-	mkdir -p build/kernel/ build/bin/ build/img/
+	mkdir -p build/kernel/gfx build/bin/ build/img/
 
 qemu:
 	@qemu-system-x86_64 -fda build/img/disk.img

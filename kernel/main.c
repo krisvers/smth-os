@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <vga.h>
+#include <gfx/gfx.h>
 #include <gdt.h>
 #include <idt.h>
 #include <isr.h>
