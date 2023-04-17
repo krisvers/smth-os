@@ -10,10 +10,75 @@ static uint16_t video_res[2];
 
 void main();
 
+/*
+VGA-Compatible BIOS Video Modes
+	0x00: 0xB8000 text 40x25,   16 shade greyscale
+	0x01: 0xB8000 text 40x25,   16 colors
+	0x02: 0xB8000 text 80x25,   16 shade greyscale
+	0x03: 0xB8000 text 80x25,   16 FG colors, 16 BG colors
+	0x04: 0xB8000 gfx  320x200, 4 colors
+	0x05: 0xB8000 gfx  320x200, 4 shade greyscale
+	0x06: 0xB8000 gfx  640x200, monochrome
+	0x0D: 0xA0000 gfx  320x200, 16 color
+	0x0E: 0xA0000 gfx  640x200, 16 color
+	0x0F: 0xA0000 gfx  640x350, monochrome
+	0x10: 0xA0000 gfx  640x350, 16 color
+	0x11: 0xA0000 gfx  640x480, monochrome
+	0x12: 0xA0000 gfx  640x480, 16 color
+	0x13: 0xA0000 gfx  320x200, 8 bit RGB
+*/
+
+
 void __attribute((section(".entry"))) _kentry() {
 	video_res[0] = (boot_info[6] << 8) | (boot_info[5]);
 	video_res[1] = (boot_info[8] << 8) | (boot_info[7]);
 	video_ptr = (void *) ((boot_info[4] << 24) | (boot_info[3] << 16) | (boot_info[2] << 8) | (boot_info[1]));
+
+	vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+	switch (boot_info[0]) {
+		case 0x00:
+			tty_init(video_res[0], video_res[1], video_ptr);
+			break;
+		case 0x01:
+			tty_init(video_res[0], video_res[1], video_ptr);
+			break;
+		case 0x02:
+			tty_init(video_res[0], video_res[1], video_ptr);
+			break;
+		case 0x03:
+			tty_init(video_res[0], video_res[1], video_ptr);
+			break;
+		case 0x04:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
+		case 0x05:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
+		case 0x06:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
+		case 0x0D:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
+		case 0x0E:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
+		case 0x0F:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
+		case 0x10:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
+		case 0x11:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
+		case 0x12:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
+		case 0x13:
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
+	}
 
 	if (boot_info[0] == 0x03) {
 		tty_init(video_res[0], video_res[1], video_ptr);

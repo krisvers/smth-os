@@ -78,18 +78,30 @@ start:
 	
 	.vid:
 ; setup video mode
-	;	0x03: text mode 80x25, 16 FG colors, 16 BG colors
-	;	0x13: vga mode 320x200, 8 bit RGB
+	;	0x00: 0xB8000 text 40x25,   16 shade greyscale
+	;	0x01: 0xB8000 text 40x25,   16 colors
+	;	0x02: 0xB8000 text 80x25,   16 shade greyscale
+	;	0x03: 0xB8000 text 80x25,   16 FG colors, 16 BG colors
+	;	0x04: 0xB8000 gfx  320x200, 4 colors
+	;	0x05: 0xB8000 gfx  320x200, 4 shade greyscale
+	;	0x06: 0xB8000 gfx  640x200, monochrome
+	;	0x0D: 0xA0000 gfx  320x200, 16 color
+	;	0x0E: 0xA0000 gfx  640x200, 16 color
+	;	0x0F: 0xA0000 gfx  640x350, monochrome
+	;	0x10: 0xA0000 gfx  640x350, 16 color
+	;	0x11: 0xA0000 gfx  640x480, monochrome
+	;	0x12: 0xA0000 gfx  640x480, 16 color
+	;	0x13: 0xA0000 gfx  320x200, 8 bit RGB
 	mov ah, 0x00
-	mov al, 0x13
+	mov al, 0x06
 	int 0x10
 
 ; pass video mode
 	mov byte [INFO_OFFSET], al		; 0
-	mov dword [INFO_OFFSET + 1], 0xA0000	; 1 - 4
-	mov word [INFO_OFFSET + 5], 320		; 5 - 6
+	mov dword [INFO_OFFSET + 1], 0xB8000	; 1 - 4
+	mov word [INFO_OFFSET + 5], 640		; 5 - 6
 	mov word [INFO_OFFSET + 7], 200		; 7 - 8
-	mov byte [INFO_OFFSET + 9], 1		; 9
+	mov byte [INFO_OFFSET + 9], 0		; 9
 
 ; hide cursor
 	mov ah, 0x01

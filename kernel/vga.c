@@ -13,6 +13,15 @@ static bool vga = false;
 void vga_setp(uint16_t x, uint16_t y, uint64_t color) {
 	if (vga) {
 		switch (depth) {
+			case 0:
+				if (color) {
+					// fix this (monochrome bit shifting)
+
+					((uint8_t *) vga_mem)[((x + y * width) / 2)] |= 1 << ((x + y * width) % 2);
+					break;
+				}
+
+				((uint8_t *) vga_mem)[(x + y * width) / 2] = ~(~((uint8_t *) vga_mem)[(x + y * width) / 2] | (1 << ((x + y * width) % 2)));
 			case 1:
 				((uint8_t *) vga_mem)[x + y * width] = color;
 				break;
@@ -25,6 +34,9 @@ void vga_setp(uint16_t x, uint16_t y, uint64_t color) {
 			case 8:
 				((uint64_t *) vga_mem)[x + y * width] = color;
 				break;
+			case 0xFF:
+				// implement 4 color mode
+				return;
 			default:
 				return;
 		}
@@ -33,6 +45,10 @@ void vga_setp(uint16_t x, uint16_t y, uint64_t color) {
 
 void vga_clear() {
 	if (vga) {
+		if (!depth) {
+			memset(vga_mem, 0, width * height / 8);
+		}
+
 		memset(vga_mem, 0, width * height * depth);
 	}
 }
