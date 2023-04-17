@@ -14,9 +14,9 @@ void main() {
 	irq_init();
 	pit_init();
 
-	for (int a = 0; a < 640; a++) {
-		for (int b = 0; b < 200; b++) {
-			vga_setp(a, b, 1);
+	for (int a = 0; a < 1600; a++) {
+		for (int b = 0; b < 1200; b++) {
+			vga_setp(a, b, a);
 		}
 	}
 

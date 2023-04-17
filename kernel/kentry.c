@@ -78,14 +78,10 @@ void __attribute((section(".entry"))) _kentry() {
 		case 0x13:
 			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
 			break;
-	}
-
-	if (boot_info[0] == 0x03) {
-		tty_init(video_res[0], video_res[1], video_ptr);
-	} else if (boot_info[0] == 0x13) {
-		vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
-	} else {
-		// implement other sort of text/vga/cga stuff
+		default:
+			// other video modes (probably not standard vga) or possible headless
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
+			break;
 	}
 
 	main();
