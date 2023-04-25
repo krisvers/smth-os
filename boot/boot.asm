@@ -77,6 +77,11 @@ start:
 	jmp error
 	
 	.vid:
+; hide cursor
+	mov ah, 0x01
+	mov ch, 0x3F
+	int 0x10
+
 ; setup video mode
 	;	0x00: 0xB8000 text 40x25,   16 shade greyscale
 	;	0x01: 0xB8000 text 40x25,   16 colors
@@ -93,25 +98,34 @@ start:
 	;	0x12: 0xA0000 gfx  640x480, 16 color
 	;	0x13: 0xA0000 gfx  320x200, 8 bit RGB
 	mov ah, 0x00
-	mov al, 0x13
+	mov al, 0x03
 	int 0x10
 
 ; pass video mode (this may be changed to only pass the video mode later)
 	; video mode
-	mov word [INFO_OFFSET], ax		; boot_info[0]
+	mov word [INFO_OFFSET], 0x03		; boot_info[0]
 	; video ram address
-	mov dword [INFO_OFFSET + 2], 0xA0000	; boot_info[2 - 5]
+	mov dword [INFO_OFFSET + 2], 0xB8000	; boot_info[2 - 5]
 	; video width
-	mov word [INFO_OFFSET + 6], 320		; boot_info[6 - 7]
+	mov word [INFO_OFFSET + 6], 80		; boot_info[6 - 7]
 	; video height
-	mov word [INFO_OFFSET + 8], 200		; boot_info[8 - 9]
+	mov word [INFO_OFFSET + 8], 25		; boot_info[8 - 9]
 	; color depth (0: monochrome, 1: 1-byte/8-bit/256, 2: 2-byte/16-bit/..., 4: 4-byte/.../..., 8: 8-byte/.../..., 0xFF: 0.25-byte/2-bit/4, 0xXX: not implemented)
 	mov byte [INFO_OFFSET + 10], 8		; boot_info[10]
 
-; hide cursor
-	mov ah, 0x01
-	mov ch, 0x3F
-	int 0x10
+; check cpuid
+	pushfd
+	pushfd
+	xor dword [esp], 0x00200000
+	popfd
+	pushfd
+	pop eax
+	xor eax, [esp]
+	popfd
+	and eax, 0x00200000
+	jz error
+
+	mov byte [INFO_OFFSET + 11], 1
 
 ; enable the A20 line for full memory
 	call enable_A20

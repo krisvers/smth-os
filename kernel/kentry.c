@@ -34,7 +34,6 @@ void __attribute((section(".entry"))) _kentry() {
 	video_res[1] = (boot_info[9] << 8) | (boot_info[8]);
 	video_ptr = (void *) ((boot_info[5] << 24) | (boot_info[4] << 16) | (boot_info[3] << 8) | (boot_info[2]));
 
-	vga_init(video_res[0], video_res[1], video_ptr, boot_info[9]);
 	switch (((uint16_t *) boot_info)[0]) {
 		case 0x00:
 			tty_init(video_res[0], video_res[1], video_ptr);
@@ -83,7 +82,8 @@ void __attribute((section(".entry"))) _kentry() {
 			break;
 		default:
 			// other video modes (probably not standard vga) or possible headless
-			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
+			//vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
+			//tty_init(video_res[0], video_res[1], video_ptr);
 			break;
 	}
 

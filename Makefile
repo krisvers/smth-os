@@ -25,6 +25,6 @@ clean:
 	mkdir -p build/kernel/gfx build/bin/ build/img/
 
 qemu:
-	@qemu-system-x86_64 -fda build/img/disk.img
+	@qemu-system-x86_64 -fda build/img/disk.img -cpu Broadwell
 
 rebuild: clean build
