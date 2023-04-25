@@ -8,6 +8,14 @@
 #include <pic.h>
 #include <pit.h>
 
+void pix(Registers * regs) {
+	vga_setp(0, 0, 0x0F);
+}
+
+void unpix(Registers * regs) {
+	vga_setp(0, 0, 0x00);
+}
+
 void main() {
 	gdt_init();
 	idt_init();
@@ -16,6 +24,9 @@ void main() {
 	pit_init();
 
 	vga_pallete_test();
+
+	pit_register_event(pix, 1000, 0);
+	pit_register_event(unpix, 1000, 1000);
 
 	puts("hello\tworld\nnewline\ntest\bs");
 }
