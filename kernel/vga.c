@@ -5,6 +5,7 @@
 #include <string.h>
 
 static void * vga_mem = NULL;
+static void * buffer_mem = NULL;
 static uint16_t width = 0;
 static uint16_t height = 0;
 static uint8_t depth = 0;
@@ -16,6 +17,10 @@ void vga_pallete_test() {
 			vga_setp(w, h, w);
 		}
 	}
+}
+
+void vga_swap_buffer() {
+	memcpy(vga_mem, buffer_mem, width * height * depth);
 }
 
 void vga_setp(uint16_t x, uint16_t y, uint64_t color) {
@@ -35,31 +40,31 @@ void vga_setp(uint16_t x, uint16_t y, uint64_t color) {
 				if (color) {
 					// fix this (monochrome bit shifting)
 
-					((uint8_t *) vga_mem)[(x + y * width) / 8] |= 1 << ((x + y * width) % 8);
+					((uint8_t *) buffer_mem)[(x + y * width) / 8] |= 1 << ((x + y * width) % 8);
 					break;
 				}
 
 				break;
 			case 2:
 				if (color) {
-					((uint8_t *) vga_mem)[(x + y  * width) / 4] |= (color & 0b11) << ((x + y * width) % 4);
+					((uint8_t *) buffer_mem)[(x + y  * width) / 4] |= (color & 0b11) << ((x + y * width) % 4);
 				}
 			case 8:
-				((uint8_t *) vga_mem)[x + y * width] = color;
+				((uint8_t *) buffer_mem)[x + y * width] = color;
 				break;
 			case 16:
-				((uint16_t *) vga_mem)[x + y * width] = color;
+				((uint16_t *) buffer_mem)[x + y * width] = color;
 				break;
 			case 24:
-				((uint8_t *) vga_mem)[x + y * width * 3] = color & 0x0000FF;
-				((uint8_t *) vga_mem)[x + y * width * 3 + 1] = (color >> 8) & 0x00FF;
-				((uint8_t *) vga_mem)[x + y * width * 3 + 2] = color >> 16;
+				((uint8_t *) buffer_mem)[x + y * width * 3] = color & 0x0000FF;
+				((uint8_t *) buffer_mem)[x + y * width * 3 + 1] = (color >> 8) & 0x00FF;
+				((uint8_t *) buffer_mem)[x + y * width * 3 + 2] = color >> 16;
 				break;
 			case 32:
-				((uint32_t *) vga_mem)[x + y * width] = color;
+				((uint32_t *) buffer_mem)[x + y * width] = color;
 				break;
 			case 64:
-				((uint64_t *) vga_mem)[x + y * width] = color;
+				((uint64_t *) buffer_mem)[x + y * width] = color;
 				break;
 			default:
 				return;
@@ -80,7 +85,7 @@ uint64_t vga_getp(uint16_t x, uint16_t y) {
 		case 4:
 		
 		case 8:
-			return ((uint8_t *) vga_mem)[x + y * width];
+			return ((uint8_t *) buffer_mem)[x + y * width];
 		default:
 			break;
 	}
@@ -89,14 +94,15 @@ uint64_t vga_getp(uint16_t x, uint16_t y) {
 void vga_clear() {
 	if (vga) {
 		if (!depth) { // if monochrome
-			memset(vga_mem, 0, width * height / 8);
+			memset(buffer_mem, 0, width * height / 8);
 		}
 
-		memset(vga_mem, 0, width * height * depth);
+		memset(buffer_mem, 0, width * height * depth);
 	}
 }
 
 void vga_init(uint16_t w, uint16_t h, void * ptr, uint8_t d) {
 	width = w; height = h; vga_mem = ptr; depth = d;
+	buffer_mem = vga_mem + (w * h * d);
 	vga = true;
 }

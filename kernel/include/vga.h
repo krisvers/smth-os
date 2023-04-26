@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+void vga_swap_buffer();
 void vga_pallete_test();
 void vga_setp(uint16_t x, uint16_t y, uint64_t color);
 uint64_t vga_getp(uint16_t x, uint16_t y);
