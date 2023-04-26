@@ -1,6 +1,7 @@
+#include <game.h>
 #include <stdio.h>
 #include <string.h>
-#include <cpuid.h>
+#include <cpu.h>
 #include <vga.h>
 #include <gfx/gfx.h>
 #include <gdt.h>
@@ -10,16 +11,12 @@
 #include <pic.h>
 #include <pit.h>
 
-struct gpRegs {
-	uint32_t eax, ebx, ecx, edx;
-};
-
-void pix(Registers * regs) {
-	vga_setp(0, 0, 0x0F);
+void update_isr(Registers * regs) {
+	update();
 }
 
-void unpix(Registers * regs) {
-	vga_setp(0, 0, 0x00);
+void tick_isr(Registers * regs) {
+	tick();
 }
 
 void main() {
@@ -28,9 +25,12 @@ void main() {
 	isr_init();
 	irq_init();
 	pit_init();
+	cpu_features();
 
-//	vga_pallete_test();
+	vga_pallete_test();
 
-//	pit_register_event(pix, 1000, 0);
-//	pit_register_event(unpix, 1000, 1000);
+	setup();
+
+	pit_register_event(update_isr, 16, 0);
+	pit_register_event(tick_isr, 8, 0);
 }

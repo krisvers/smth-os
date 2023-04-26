@@ -67,6 +67,25 @@ void vga_setp(uint16_t x, uint16_t y, uint64_t color) {
 	}
 }
 
+uint64_t vga_getp(uint16_t x, uint16_t y) {
+	if (!vga || x > width || y > height) {
+		return -1;
+	}
+
+	switch (depth) {
+		case 1:
+			
+		case 2:
+			
+		case 4:
+		
+		case 8:
+			return ((uint8_t *) vga_mem)[x + y * width];
+		default:
+			break;
+	}
+}
+
 void vga_clear() {
 	if (vga) {
 		if (!depth) { // if monochrome

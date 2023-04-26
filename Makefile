@@ -13,7 +13,7 @@ build:
 	@echo "> Compiling libs and kernel..."
 	@make --no-print-directory -C ./kernel
 	@echo ">  Linking libs and kernel..."
-	@echo "-    Linking $(shell find . -type f -name "*.o") $(shell find . -type f -name "*.o") to ./build/bin/kernel.bin"
+	@echo "-    Linking $(shell find . -type f -name "*.o") $(shell find . -type f -name "*.oasm") to ./build/bin/kernel.bin"
 	@$(LD) $(LDFLAGS) --oformat binary $(shell find ./build -type f -name "*.o") $(shell find ./build -type f -name "*.oasm") -o $(DIR)/build/bin/kernel.bin
 	@echo ">  Assembling bootloader..."
 	@nasm ./boot/boot.asm -f bin -o ./build/bin/boot.bin
@@ -25,6 +25,6 @@ clean:
 	mkdir -p build/kernel/gfx build/bin/ build/img/
 
 qemu:
-	@qemu-system-x86_64 -fda build/img/disk.img -cpu Broadwell
+	@qemu-system-x86_64 -fda build/img/disk.img -cpu athlon
 
 rebuild: clean build
