@@ -3,7 +3,6 @@
 #include <string.h>
 #include <cpu.h>
 #include <vga.h>
-#include <gfx/gfx.h>
 #include <gdt.h>
 #include <idt.h>
 #include <isr.h>
@@ -11,11 +10,11 @@
 #include <pic.h>
 #include <pit.h>
 
-void update_isr(Registers * regs) {
+void update_event(Registers * regs) {
 	update();
 }
 
-void tick_isr(Registers * regs) {
+void tick_event(Registers * regs) {
 	tick();
 }
 
@@ -27,10 +26,8 @@ void main() {
 	pit_init();
 	cpu_features();
 
-	vga_pallete_test();
-
 	setup();
 
-	pit_register_event(update_isr, 16, 0);
-	pit_register_event(tick_isr, 8, 0);
+	pit_register_event(update_event, 16, 0);
+	pit_register_event(tick_event, 7, 0);
 }

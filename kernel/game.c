@@ -1,20 +1,21 @@
 #include <game.h>
 #include <stdint.h>
 #include <vga.h>
+#include <font.h>
 
 int i = 0;
 
 void setup() {
-	vga_setp(0, 0, 0xF);
+	vga_setp(i, 0, 0xF);
 }
 
 void tick() {
-	
+	i++;
 }
 
 void update() {
-	vga_setp(0, 0, (vga_getp(0, 0) ? 0x0 : 0xF));
-	i++;
+	font_putc(i * 8, 0, i, 0xF);
 
 	vga_swap_buffer();
+	//vga_clear();
 }

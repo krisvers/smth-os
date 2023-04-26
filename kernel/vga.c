@@ -19,8 +19,12 @@ void vga_pallete_test() {
 	}
 }
 
+void vga_set_background(uint8_t color) {
+	memset(buffer_mem - 1, color, width * height * (depth / 8));
+}
+
 void vga_swap_buffer() {
-	memcpy(vga_mem, buffer_mem, width * height * depth);
+	memcpy(vga_mem, buffer_mem, width * height * (depth / 8));
 }
 
 void vga_setp(uint16_t x, uint16_t y, uint64_t color) {
@@ -94,10 +98,10 @@ uint64_t vga_getp(uint16_t x, uint16_t y) {
 void vga_clear() {
 	if (vga) {
 		if (!depth) { // if monochrome
-			memset(buffer_mem, 0, width * height / 8);
+			memset(buffer_mem - 1, 0, width * height / 8);
 		}
 
-		memset(buffer_mem, 0, width * height * depth);
+		memset(buffer_mem - 1, 0, width * height * (depth / 8));
 	}
 }
 
