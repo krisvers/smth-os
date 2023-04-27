@@ -5,46 +5,61 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <tty.h>
+#include <vga.h>
+#include <font.h>
+
+#define SCR_CLEAR()			(tty) ? tty_clear() : vga_clear()
+#define SCR_PUTC(x, y, c, color)	(tty) ? tty_putc(x, y, c) : font_putc(x * 8, y * 8, c, color)
+#define SCR_COLOR(color)		(tty) ? tty_set_color(color) : font_set_color(color)
 
 static uint16_t cursor_x = 0;
 static uint16_t cursor_y = 0;
+static uint16_t width = 40;
+static uint16_t height = 25;
 static char hex_chars[16] = "0123456789ABCDEF";
+static bool tty = false;
+
+void stdio_init(uint16_t w, uint16_t h, bool t) {
+	width = w;
+	height = h;
+	tty = t;
+}
 
 int putc(int ic) {
 	switch (ic) {
 		case '\n':
 			cursor_x = 0;
-			if (++cursor_y >= 25) {
+			if (++cursor_y >= height) {
 				cursor_x = 0; cursor_y = 0;
-				tty_clear();
+				SCR_CLEAR();
 			}
 			break;
 		case '\t':
 			cursor_x += 4;
-			if (cursor_x >= 80) {
+			if (cursor_x >= width) {
 				cursor_x = 0;
 			}
 			break;
 		case '\b':
-			if (--cursor_x >= 80) {
-				if (--cursor_y >= 25) {
+			if (--cursor_x >= width) {
+				if (--cursor_y >= height) {
 					return -1;
 				}
 
-				cursor_x = 79;
-				tty_putc(cursor_x, cursor_y, ' ');
+				cursor_x = width - 1;
+				SCR_PUTC(cursor_x, cursor_y, ' ', 0xF);
 			}
 
-			tty_putc(cursor_x, cursor_y, ' ');
+			SCR_PUTC(cursor_x, cursor_y, ' ', 0xF);
 
 			break;
 		default:
-			tty_putc(cursor_x, cursor_y, (char) ic);
-			if (++cursor_x >= 80) {
+			SCR_PUTC(cursor_x, cursor_y, (char) ic, 0xF);
+			if (++cursor_x >= width) {
 				cursor_x = 0;
-				if (++cursor_y >= 25) {
+				if (++cursor_y >= height) {
 					cursor_y = 0;
-					tty_clear();
+					SCR_CLEAR();
 				}
 			}
 
@@ -194,7 +209,7 @@ int printf(const char * restrict format, ...) {
 }
 
 int log(uint8_t color, const char * restrict format, ...) {
-	tty_set_color(color);
+	SCR_COLOR(color);
 
 	va_list parameters;
 	va_start(parameters, format);
@@ -315,10 +330,10 @@ int log(uint8_t color, const char * restrict format, ...) {
 	}
  
 	va_end(parameters);
-	tty_reset_color();
+	(tty) ? tty_reset_color() : font_set_color(0);
 	return written;
 
 errno:
-	tty_reset_color();
+	(tty) ? tty_reset_color() : font_set_color(0);
 	return -1;
 }

@@ -1,4 +1,5 @@
 #include <tty.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -20,6 +21,7 @@ void tty_clear() {
 
 void tty_init(uint16_t w, uint16_t h, void * ptr) {
 	video_ram = ptr; width = w; height = h;
+	stdio_init(w, h, true);
 	tty = true;
 }
 

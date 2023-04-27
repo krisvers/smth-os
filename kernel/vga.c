@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 static void * vga_mem = NULL;
@@ -107,6 +108,7 @@ void vga_clear() {
 
 void vga_init(uint16_t w, uint16_t h, void * ptr, uint8_t d) {
 	width = w; height = h; vga_mem = ptr; depth = d;
-	buffer_mem = vga_mem + (w * h * d);
+	buffer_mem = vga_mem + (w * h * (d / 8));
+	stdio_init(w, h, false);
 	vga = true;
 }

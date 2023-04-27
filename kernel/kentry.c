@@ -1,6 +1,7 @@
 extern char _BSS_START;
 extern char _BSS_END;
 
+#include <stdio.h>
 #include <tty.h>
 #include <vga.h>
 
@@ -82,7 +83,7 @@ void __attribute((section(".entry"))) _kentry() {
 			break;
 		default:
 			// other video modes (probably not standard vga) or possible headless
-			//vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
+			vga_init(video_res[0], video_res[1], video_ptr, boot_info[10]);
 			//tty_init(video_res[0], video_res[1], video_ptr);
 			break;
 	}
