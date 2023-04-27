@@ -97,8 +97,7 @@ start:
 	;	0x11: 0xA0000 gfx  640x480, monochrome
 	;	0x12: 0xA0000 gfx  640x480, 16 color
 	;	0x13: 0xA0000 gfx  320x200, 8 bit RGB
-	mov ah, 0x00
-	mov al, 0x13
+	mov ax, 0x0013
 	int 0x10
 
 ; pass video mode (this may be changed to only pass the video mode later)
